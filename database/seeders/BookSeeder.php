@@ -31,7 +31,10 @@ class BookSeeder extends Seeder
         ];
 
         foreach ($books as $book) {
-            Book::create($book);
+            Book::updateOrCreate(
+                ['isbn' => $book['isbn']],
+                $book
+            );
         }
     }
 }
