@@ -6,9 +6,40 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use OpenApi\Attributes as OA;
 
 class UserController extends Controller
 {
+    #[OA\Post(
+        path: '/register',
+        summary: 'Inscription d\'un nouvel utilisateur',
+        description: 'Crée un compte utilisateur et renvoie un token Sanctum pour les requêtes authentifiées.',
+        tags: ['Auth'],
+        parameters: [
+            new OA\Parameter(
+                name: 'Accept',
+                in: 'header',
+                required: true,
+                schema: new OA\Schema(type: 'string', default: 'application/json')
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(ref: '#/components/schemas/RegisterRequest')
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Inscription réussie',
+                content: new OA\JsonContent(ref: '#/components/schemas/AuthResponse')
+            ),
+            new OA\Response(
+                response: 422,
+                description: 'Erreur de validation',
+                content: new OA\JsonContent(ref: '#/components/schemas/ValidationError')
+            ),
+        ]
+    )]
     public function register(Request $request)
     {
         $validated = $request->validate([
@@ -31,6 +62,45 @@ class UserController extends Controller
         ]);
     }
 
+    #[OA\Post(
+        path: '/login',
+        summary: 'Connexion utilisateur',
+        description: 'Authentifie un utilisateur et renvoie un token Sanctum. Limité à 10 requêtes par minute.',
+        tags: ['Auth'],
+        parameters: [
+            new OA\Parameter(
+                name: 'Accept',
+                in: 'header',
+                required: true,
+                schema: new OA\Schema(type: 'string', default: 'application/json')
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(ref: '#/components/schemas/LoginRequest')
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Connexion réussie',
+                content: new OA\JsonContent(ref: '#/components/schemas/AuthResponse')
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Identifiants incorrects',
+                content: new OA\JsonContent(ref: '#/components/schemas/LoginError')
+            ),
+            new OA\Response(
+                response: 422,
+                description: 'Erreur de validation',
+                content: new OA\JsonContent(ref: '#/components/schemas/ValidationError')
+            ),
+            new OA\Response(
+                response: 429,
+                description: 'Trop de tentatives de connexion'
+            ),
+        ]
+    )]
     public function login(Request $request)
     {
         $validated = $request->validate([
@@ -54,6 +124,40 @@ class UserController extends Controller
         ]);
     }
 
+    #[OA\Post(
+        path: '/logout',
+        summary: 'Déconnexion utilisateur',
+        description: 'Révoque le token Sanctum courant de l\'utilisateur authentifié.',
+        tags: ['Auth'],
+        security: [['sanctum' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'Accept',
+                in: 'header',
+                required: true,
+                schema: new OA\Schema(type: 'string', default: 'application/json')
+            ),
+            new OA\Parameter(
+                name: 'Authorization',
+                in: 'header',
+                required: true,
+                description: 'Bearer {token}',
+                schema: new OA\Schema(type: 'string', example: 'Bearer 1|abcdefghijklmnopqrstuvwxyz')
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Déconnexion réussie',
+                content: new OA\JsonContent(ref: '#/components/schemas/MessageResponse')
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Non authentifié',
+                content: new OA\JsonContent(ref: '#/components/schemas/UnauthorizedError')
+            ),
+        ]
+    )]
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
