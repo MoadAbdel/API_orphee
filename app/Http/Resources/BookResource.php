@@ -2,11 +2,14 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Concerns\GeneratesApiUrls;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class BookResource extends JsonResource
 {
+    use GeneratesApiUrls;
+
     public function toArray(Request $request): array
     {
         return [
@@ -15,10 +18,10 @@ class BookResource extends JsonResource
             'summary' => $this->summary,
             'isbn' => $this->isbn,
             '_links' => [
-                'self' => route('books.show', $this->id),
-                'update' => route('books.update', $this->id),
-                'delete' => route('books.destroy', $this->id),
-                'all' => route('books.index'),
+                'self' => $this->apiUrl('books.show', ['book' => $this->id]),
+                'update' => $this->apiUrl('books.update', ['book' => $this->id]),
+                'delete' => $this->apiUrl('books.destroy', ['book' => $this->id]),
+                'all' => $this->apiUrl('books.index'),
             ],
         ];
     }

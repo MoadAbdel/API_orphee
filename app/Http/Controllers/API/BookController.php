@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\BookCollection;
 use App\Http\Resources\BookResource;
 use App\Models\Book;
 use Illuminate\Http\Request;
@@ -35,24 +36,18 @@ class BookController extends Controller
             new OA\Response(
                 response: 200,
                 description: 'Liste des livres',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(
-                            property: 'data',
-                            type: 'array',
-                            items: new OA\Items(ref: '#/components/schemas/Book')
-                        ),
-                        new OA\Property(property: 'links', type: 'object'),
-                        new OA\Property(property: 'meta', type: 'object'),
-                    ],
-                    type: 'object'
-                )
+                content: new OA\JsonContent(ref: '#/components/schemas/PaginatedBooksResponse')
             ),
         ]
     )]
-    public function index()
+    public function index(Request $request)
     {
-        return BookResource::collection(Book::paginate(2));
+        $books = Book::paginate(2);
+        $books->withPath(
+            $request->getSchemeAndHttpHost().route('books.index', [], false)
+        );
+
+        return new BookCollection($books);
     }
 
     #[OA\Post(
@@ -84,12 +79,7 @@ class BookController extends Controller
             new OA\Response(
                 response: 200,
                 description: 'Livre créé',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'data', ref: '#/components/schemas/Book'),
-                    ],
-                    type: 'object'
-                )
+                content: new OA\JsonContent(ref: '#/components/schemas/BookResponse')
             ),
             new OA\Response(
                 response: 401,
@@ -141,12 +131,7 @@ class BookController extends Controller
             new OA\Response(
                 response: 200,
                 description: 'Détail du livre',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'data', ref: '#/components/schemas/Book'),
-                    ],
-                    type: 'object'
-                )
+                content: new OA\JsonContent(ref: '#/components/schemas/BookResponse')
             ),
             new OA\Response(
                 response: 404,
@@ -202,12 +187,7 @@ class BookController extends Controller
             new OA\Response(
                 response: 200,
                 description: 'Livre mis à jour',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'data', ref: '#/components/schemas/Book'),
-                    ],
-                    type: 'object'
-                )
+                content: new OA\JsonContent(ref: '#/components/schemas/BookResponse')
             ),
             new OA\Response(
                 response: 401,

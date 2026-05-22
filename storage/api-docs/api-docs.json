@@ -47,21 +47,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Book"
-                                            }
-                                        },
-                                        "links": {
-                                            "type": "object"
-                                        },
-                                        "meta": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/PaginatedBooksResponse"
                                 }
                             }
                         }
@@ -112,12 +98,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/components/schemas/Book"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/BookResponse"
                                 }
                             }
                         }
@@ -185,12 +166,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/components/schemas/Book"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/BookResponse"
                                 }
                             }
                         }
@@ -261,12 +237,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/components/schemas/Book"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/BookResponse"
                                 }
                             }
                         }
@@ -679,19 +650,114 @@
                 "properties": {
                     "self": {
                         "type": "string",
-                        "format": "uri"
+                        "format": "uri",
+                        "example": "http://127.0.0.1:8000/api/v1/books/1"
                     },
                     "update": {
                         "type": "string",
-                        "format": "uri"
+                        "format": "uri",
+                        "example": "http://127.0.0.1:8000/api/v1/books/1"
                     },
                     "delete": {
                         "type": "string",
-                        "format": "uri"
+                        "format": "uri",
+                        "example": "http://127.0.0.1:8000/api/v1/books/1"
                     },
                     "all": {
                         "type": "string",
-                        "format": "uri"
+                        "format": "uri",
+                        "example": "http://127.0.0.1:8000/api/v1/books"
+                    }
+                },
+                "type": "object"
+            },
+            "BookPaginationLinks": {
+                "properties": {
+                    "self": {
+                        "type": "string",
+                        "format": "uri",
+                        "example": "http://127.0.0.1:8000/api/v1/books?page=1"
+                    },
+                    "first": {
+                        "type": "string",
+                        "format": "uri",
+                        "example": "http://127.0.0.1:8000/api/v1/books?page=1"
+                    },
+                    "last": {
+                        "type": "string",
+                        "format": "uri",
+                        "example": "http://127.0.0.1:8000/api/v1/books?page=2"
+                    },
+                    "prev": {
+                        "type": "string",
+                        "format": "uri",
+                        "example": "http://127.0.0.1:8000/api/v1/books?page=1",
+                        "nullable": true
+                    },
+                    "next": {
+                        "type": "string",
+                        "format": "uri",
+                        "example": "http://127.0.0.1:8000/api/v1/books?page=2",
+                        "nullable": true
+                    },
+                    "all": {
+                        "type": "string",
+                        "format": "uri",
+                        "example": "http://127.0.0.1:8000/api/v1/books"
+                    }
+                },
+                "type": "object"
+            },
+            "BookPaginationMeta": {
+                "properties": {
+                    "current_page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "from": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_page": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "to": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "total": {
+                        "type": "integer",
+                        "example": 3
+                    }
+                },
+                "type": "object"
+            },
+            "PaginatedBooksResponse": {
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Book"
+                        }
+                    },
+                    "_links": {
+                        "$ref": "#/components/schemas/BookPaginationLinks"
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/BookPaginationMeta"
+                    }
+                },
+                "type": "object"
+            },
+            "BookResponse": {
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Book"
                     }
                 },
                 "type": "object"

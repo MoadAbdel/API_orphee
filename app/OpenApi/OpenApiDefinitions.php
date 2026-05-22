@@ -63,10 +63,50 @@ use OpenApi\Attributes as OA;
 #[OA\Schema(
     schema: 'BookLinks',
     properties: [
-        new OA\Property(property: 'self', type: 'string', format: 'uri'),
-        new OA\Property(property: 'update', type: 'string', format: 'uri'),
-        new OA\Property(property: 'delete', type: 'string', format: 'uri'),
-        new OA\Property(property: 'all', type: 'string', format: 'uri'),
+        new OA\Property(property: 'self', type: 'string', format: 'uri', example: 'http://127.0.0.1:8000/api/v1/books/1'),
+        new OA\Property(property: 'update', type: 'string', format: 'uri', example: 'http://127.0.0.1:8000/api/v1/books/1'),
+        new OA\Property(property: 'delete', type: 'string', format: 'uri', example: 'http://127.0.0.1:8000/api/v1/books/1'),
+        new OA\Property(property: 'all', type: 'string', format: 'uri', example: 'http://127.0.0.1:8000/api/v1/books'),
+    ],
+    type: 'object'
+)]
+#[OA\Schema(
+    schema: 'BookPaginationLinks',
+    properties: [
+        new OA\Property(property: 'self', type: 'string', format: 'uri', example: 'http://127.0.0.1:8000/api/v1/books?page=1'),
+        new OA\Property(property: 'first', type: 'string', format: 'uri', example: 'http://127.0.0.1:8000/api/v1/books?page=1'),
+        new OA\Property(property: 'last', type: 'string', format: 'uri', example: 'http://127.0.0.1:8000/api/v1/books?page=2'),
+        new OA\Property(property: 'prev', type: 'string', format: 'uri', example: 'http://127.0.0.1:8000/api/v1/books?page=1', nullable: true),
+        new OA\Property(property: 'next', type: 'string', format: 'uri', example: 'http://127.0.0.1:8000/api/v1/books?page=2', nullable: true),
+        new OA\Property(property: 'all', type: 'string', format: 'uri', example: 'http://127.0.0.1:8000/api/v1/books'),
+    ],
+    type: 'object'
+)]
+#[OA\Schema(
+    schema: 'BookPaginationMeta',
+    properties: [
+        new OA\Property(property: 'current_page', type: 'integer', example: 1),
+        new OA\Property(property: 'from', type: 'integer', example: 1),
+        new OA\Property(property: 'last_page', type: 'integer', example: 2),
+        new OA\Property(property: 'per_page', type: 'integer', example: 2),
+        new OA\Property(property: 'to', type: 'integer', example: 2),
+        new OA\Property(property: 'total', type: 'integer', example: 3),
+    ],
+    type: 'object'
+)]
+#[OA\Schema(
+    schema: 'PaginatedBooksResponse',
+    properties: [
+        new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: '#/components/schemas/Book')),
+        new OA\Property(property: '_links', ref: '#/components/schemas/BookPaginationLinks'),
+        new OA\Property(property: 'meta', ref: '#/components/schemas/BookPaginationMeta'),
+    ],
+    type: 'object'
+)]
+#[OA\Schema(
+    schema: 'BookResponse',
+    properties: [
+        new OA\Property(property: 'data', ref: '#/components/schemas/Book'),
     ],
     type: 'object'
 )]
