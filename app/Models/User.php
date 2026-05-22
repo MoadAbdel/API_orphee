@@ -30,4 +30,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function usesProfessionalEmail(?string $email = null): bool
+    {
+        $email = $email ?? $this->email;
+
+        return ! preg_match('/@(gmail|yahoo|hotmail|live|outlook)\./i', $email);
+    }
 }
